@@ -1,8 +1,9 @@
 <main class="p-6">
   <statement-validator-file-uploader
-    (validationResultEvent)="showValidation($event)"
+    [(result)]="validationResponse"
   ></statement-validator-file-uploader>
   <statement-validator-result-view
+    *ngIf="validationResponse"
     [validationResponse]="validationResponse"
   ></statement-validator-result-view>
 </main>
