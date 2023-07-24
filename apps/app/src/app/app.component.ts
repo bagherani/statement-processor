@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ValidationResponse } from '../types/validation-response';
 
 @Component({
   selector: 'statement-validator-root',
@@ -6,5 +7,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'app';
+  title = 'Statement Validator';
+  validationResponse: ValidationResponse | null;
+
+  constructor() {
+    this.validationResponse = null;
+  }
+
+  showValidation(resp: ValidationResponse) {
+    this.validationResponse = resp;
+  }
 }
