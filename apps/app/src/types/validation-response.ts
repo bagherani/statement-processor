@@ -12,3 +12,8 @@ export type ValidationResponse = {
   invalidRecords: InvalidRecords;
   errors: string[];
 };
+
+export type InvalidRecordType = (InvalidRecords[number] & {
+  reference: string;
+  expectedBalance: number;
+})[];
