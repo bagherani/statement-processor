@@ -18,3 +18,10 @@ export type TransactionRecordCallback = (
   err: Error,
   res: TransactionRecord
 ) => void;
+
+export type CsvRecordType = {
+  Reference: number;
+  Mutation: number;
+  'Start Balance': string;
+  'End Balance': number;
+};
