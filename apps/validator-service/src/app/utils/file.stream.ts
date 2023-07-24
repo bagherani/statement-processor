@@ -1,8 +1,8 @@
-import { ReadStream, createReadStream } from 'fs';
+import { Readable } from 'stream';
 
-export function getFileStream(
-  absFilePath: string,
-  options: { encoding: BufferEncoding } | null = { encoding: 'utf8' }
-): ReadStream {
-  return createReadStream(absFilePath, options);
+export function getFileStream(file: Express.Multer.File): Readable {
+  const stream = new Readable();
+  stream.push(file.buffer);
+  stream.push(null);
+  return stream;
 }
