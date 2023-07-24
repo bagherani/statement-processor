@@ -1,2 +1,8 @@
-<statement-validator-nx-welcome></statement-validator-nx-welcome>
-<router-outlet></router-outlet>
+<main class="p-6">
+  <statement-validator-file-uploader
+    (validationResultEvent)="showValidation($event)"
+  ></statement-validator-file-uploader>
+  <statement-validator-result-view
+    [validationResponse]="validationResponse"
+  ></statement-validator-result-view>
+</main>
