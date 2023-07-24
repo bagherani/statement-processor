@@ -4,8 +4,13 @@ import { TransactionRecord } from '../types/record-types';
 import { TransactionReader } from './transaction.reader';
 import {
   TransactionReaderFactory,
-  TransactionsFileType
+  TransactionsFileType,
 } from './transaction.reader.factory';
+import {
+  DuplicatedReferences,
+  InvalidRecords,
+  ValidationResponse,
+} from '../types/validation-response';
 
 type InvalidRecord = {
   startBalance: number;
@@ -17,6 +22,7 @@ export class TransactionValidator extends EventEmitter {
   private readonly reader: TransactionReader;
   private readonly duplicateRefs: Map<number, number>;
   private readonly invalidRecords: Map<number, InvalidRecord>;
+  private readonly errors: Error[] = [];
 
   constructor(fileType: TransactionsFileType) {
     super();
@@ -25,19 +31,27 @@ export class TransactionValidator extends EventEmitter {
     this.invalidRecords = new Map<number, InvalidRecord>();
   }
 
-  validate(filename: string) {
+  validate(file: Express.Multer.File) {
     this.duplicateRefs.clear();
     this.invalidRecords.clear();
-    this.reader.read(filename, this.validateRecord);
+    this.errors.splice(0, this.errors.length);
+    this.reader.read(file, this.validateRecord);
 
     return this;
   }
 
+  /**
+   * @emits done ValidationResponse
+   * @param err
+   * @param record
+   * @returns
+   */
   private validateRecord = (err: Error, record: TransactionRecord) => {
     if (record === null && err === null) {
-      this.emit('done', {
+      this.emit('done', <ValidationResponse>{
         duplicatedReferences: this.getDuplicateRefs(),
-        invalidRecords: this.getInvalidRefs()
+        invalidRecords: this.getInvalidRefs(),
+        errors: this.getErrors(),
       });
 
       return;
@@ -48,6 +62,11 @@ export class TransactionValidator extends EventEmitter {
   };
 
   private checkEndBalance = (err: Error, record: TransactionRecord) => {
+    if (err) {
+      this.errors.push(err);
+      return;
+    }
+
     const startBalance = record.startBalance;
     const mutation = record.mutation;
     const endBalance = record.endBalance;
@@ -56,12 +75,17 @@ export class TransactionValidator extends EventEmitter {
       this.invalidRecords.set(record.reference, {
         startBalance,
         mutation,
-        endBalance
+        endBalance,
       });
     }
   };
 
   private checkForDuplication = (err: Error, record: TransactionRecord) => {
+    if (err) {
+      this.errors.push(err);
+      return;
+    }
+
     const reference = record.reference;
 
     this.duplicateRefs.set(
@@ -72,7 +96,7 @@ export class TransactionValidator extends EventEmitter {
     );
   };
 
-  private getDuplicateRefs = () => {
+  private getDuplicateRefs = (): DuplicatedReferences => {
     const result = {};
     this.duplicateRefs.forEach((value, key) => {
       if (value > 1) {
@@ -83,7 +107,7 @@ export class TransactionValidator extends EventEmitter {
     return result;
   };
 
-  private getInvalidRefs = () => {
+  private getInvalidRefs = (): InvalidRecords => {
     const result = {};
 
     this.invalidRecords.forEach((value, key) => {
@@ -91,5 +115,9 @@ export class TransactionValidator extends EventEmitter {
     });
 
     return result;
+  };
+
+  private getErrors = (): string[] => {
+    return this.errors.map((err) => err.message);
   };
 }

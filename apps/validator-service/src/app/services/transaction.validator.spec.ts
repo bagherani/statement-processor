@@ -1,10 +1,12 @@
 import { resolve as resolvePath } from 'path';
+import { readFileSync } from 'fs';
 
 import { TransactionValidator } from './transaction.validator';
 import { TransactionsFileType } from './transaction.reader.factory';
 
 it('validate xml file', () => {
   const filename = resolvePath(__dirname, './__mocks__/records.xml');
+
   new TransactionValidator(TransactionsFileType.xml)
     .on('done', (result) => {
       expect(result.duplicatedReferences['138932']).toBe(2);
@@ -13,7 +15,7 @@ it('validate xml file', () => {
       expect(result.invalidRecords['152977']).toBeTruthy();
       expect(result.invalidRecords['192480']).toBeTruthy();
     })
-    .validate(filename);
+    .validate({ buffer: readFileSync(filename) } as Express.Multer.File);
 });
 
 it('validate csv file', () => {
@@ -24,5 +26,5 @@ it('validate csv file', () => {
       expect(result.duplicatedReferences['154771']).toBe(2);
       expect(result.invalidRecords['141007']).toBeTruthy();
     })
-    .validate(filename);
+    .validate({ buffer: readFileSync(filename) } as Express.Multer.File);
 });
