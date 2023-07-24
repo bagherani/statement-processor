@@ -28,7 +28,7 @@ export class XmlTransactionReader extends TransactionReader {
       callback(null, null);
     });
 
-    xml.on('error', (err) => {
+    xml.on('error', (err: Error) => {
       callback(err, null);
     });
   }
