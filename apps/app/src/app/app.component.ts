@@ -8,13 +8,5 @@ import { ValidationResponse } from '../types/validation-response';
 })
 export class AppComponent {
   title = 'Statement Validator';
-  validationResponse: ValidationResponse | null;
-
-  constructor() {
-    this.validationResponse = null;
-  }
-
-  showValidation(resp: ValidationResponse) {
-    this.validationResponse = resp;
-  }
+  validationResponse: ValidationResponse | null = null;
 }
