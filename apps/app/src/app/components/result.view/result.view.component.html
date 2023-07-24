@@ -1,67 +1,31 @@
 <div
-  *ngIf="validated()"
   class="transition-shadow rounded overflow-hidden shadow-lg hover:shadow-xl p-5 mx-auto mt-10 border border-gray-200"
 >
   <h2 class="font-bold">Result:</h2>
-  <div class="p-6" *ngIf="showErrors()">
-    <div *ngIf="hasDuplicatedReferences()">
-      <div
-        class="p-4 mb-4 mt-5 text-sm text-red-800 rounded-lg bg-red-50"
-        role="alert"
-      >
-        <span class="font-medium">Duplicated reference found!</span>
-      </div>
-      <div>
-        <ul>
-          <li *ngFor="let item of getDuplicateReferences()">
-            Reference ID: <span class="font-bold">{{ item[0] }}</span> -
-            Duplicated <span class="text-red-900">{{ item[1] }}</span> times
-          </li>
-        </ul>
-      </div>
+  <div class="p-6" *ngIf="showValidationErrors">
+    <div *ngIf="hasDuplicatedReferences">
+      <statement-validator-reference-duplication-failure-component
+        [duplicateReferences]="duplicateReferences"
+      ></statement-validator-reference-duplication-failure-component>
     </div>
-    <div *ngIf="hasInvalidRecords()">
-      <div
-        class="p-4 mb-4 mt-5 text-sm text-red-800 rounded-lg bg-red-50"
-        role="alert"
-      >
-        <span class="font-medium">Invalid transaction found!</span>
-      </div>
-      <ul>
-        <li *ngFor="let item of getInvalidRecords()" class="mt-3">
-          Reference ID: <span class="font-bold">{{ item.reference }}</span>
-          <ul class="pl-3">
-            <li>Start balance: {{ item.startBalance }}</li>
-            <li>Mutation: {{ item.mutation }}</li>
-            <li class="text-blue-800">
-              Expected end balance: {{ item.expectedBalance }}
-            </li>
-            <li class="text-red-900">End balance: {{ item.endBalance }}</li>
-          </ul>
-        </li>
-      </ul>
+    <div *ngIf="hasInvalidRecords">
+      <statement-validator-balance-failure-component
+        [invalidRecords]="invalidRecords"
+      ></statement-validator-balance-failure-component>
     </div>
   </div>
 
   <div
-    *ngIf="showSuccessMessage()"
+    *ngIf="showSuccessMessage"
     class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50"
     role="alert"
   >
     <span class="font-medium">No error found</span>
   </div>
 
-  <div *ngIf="hasFileError()">
-    <div
-      class="p-4 mb-4 mt-5 text-sm text-red-800 rounded-lg bg-red-50"
-      role="alert"
-    >
-      <span class="font-medium">File error found!</span>
-    </div>
-    <ul>
-      <li *ngFor="let errorMessage of getFileErrors()" class="mt-3">
-        {{ errorMessage }}
-      </li>
-    </ul>
+  <div *ngIf="hasFileError">
+    <statement-validator-file-parsing-failure-component
+      [fileErrors]="fileErrors"
+    ></statement-validator-file-parsing-failure-component>
   </div>
 </div>

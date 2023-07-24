@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import {
-  InvalidRecords,
+  InvalidRecordType,
   ValidationResponse,
 } from '../../../types/validation-response';
 
@@ -10,97 +10,105 @@ import {
   styleUrls: ['./result.view.component.css'],
 })
 export class ResultViewComponent {
-  @Input() validationResponse: ValidationResponse | null;
-
-  constructor() {
-    this.validationResponse = null;
+  @Input() set validationResponse(res: ValidationResponse | null) {
+    this.response = res;
+    this.showValidationErrors = this.hasValidationError();
+    this.showSuccessMessage = this.isValid();
+    this.duplicateReferences = this.getDuplicateReferences();
+    this.hasDuplicatedReferences = this.getHasDuplicatedReferences();
+    this.hasInvalidRecords = this.getHasInvalidRecords();
+    this.invalidRecords = this.getInvalidRecords();
+    this.hasFileError = this.getHasFileError();
+    this.fileErrors = this.getFileErrors();
   }
+
+  private response: ValidationResponse | null = null;
+  showValidationErrors = false;
+  showSuccessMessage = false;
+  hasDuplicatedReferences = false;
+  hasInvalidRecords = false;
+  hasFileError = false;
+  fileErrors: string[] = [];
+  invalidRecords: InvalidRecordType = [];
+  duplicateReferences: [string, number][] = [];
 
   validated(): boolean {
-    return this.validationResponse !== null;
+    return this.response !== null;
   }
 
-  showSuccessMessage(): boolean {
-    if (
-      this.validationResponse !== null &&
-      this.validationResponse.errors.length === 0
-    ) {
+  private isValid(): boolean {
+    if (this.response !== null && this.response.errors.length === 0) {
       return (
-        Object.keys(this.validationResponse.duplicatedReferences).length ===
-          0 && Object.keys(this.validationResponse.invalidRecords).length === 0
+        Object.keys(this.response.duplicatedReferences).length === 0 &&
+        Object.keys(this.response.invalidRecords).length === 0
       );
     }
 
     return false;
   }
 
-  showErrors(): boolean {
-    if (this.validationResponse !== null) {
+  private hasValidationError(): boolean {
+    if (this.response !== null) {
       return (
-        Object.keys(this.validationResponse.duplicatedReferences).length > 0 ||
-        Object.keys(this.validationResponse.invalidRecords).length > 0
+        Object.keys(this.response.duplicatedReferences).length > 0 ||
+        Object.keys(this.response.invalidRecords).length > 0
       );
     }
 
     return false;
   }
 
-  hasFileError(): boolean {
+  private getHasFileError(): boolean {
     return (
-      this.validationResponse !== null &&
-      Array.isArray(this.validationResponse.errors) &&
-      this.validationResponse.errors.length > 0
+      this.response !== null &&
+      Array.isArray(this.response.errors) &&
+      this.response.errors.length > 0
     );
   }
 
-  getFileErrors(): string[] {
-    if (!this.validationResponse) {
+  private getFileErrors(): string[] {
+    if (!this.response) {
       return [];
     }
 
-    return this.validationResponse.errors;
+    return this.response.errors;
   }
 
-  hasDuplicatedReferences(): boolean {
-    if (!this.validationResponse) {
+  private getHasDuplicatedReferences(): boolean {
+    if (!this.response) {
       return false;
     }
 
-    return Object.keys(this.validationResponse.duplicatedReferences).length > 0;
+    return Object.keys(this.response.duplicatedReferences).length > 0;
   }
 
-  getDuplicateReferences(): [string, number][] {
-    if (!this.validationResponse) {
+  private getDuplicateReferences(): [string, number][] {
+    if (!this.response) {
       return [];
     }
 
-    return Object.entries(this.validationResponse.duplicatedReferences);
+    return Object.entries(this.response.duplicatedReferences);
   }
 
-  hasInvalidRecords(): boolean {
-    if (!this.validationResponse) {
+  private getHasInvalidRecords(): boolean {
+    if (!this.response) {
       return false;
     }
 
-    return Object.keys(this.validationResponse?.invalidRecords).length > 0;
+    return Object.keys(this.response?.invalidRecords).length > 0;
   }
 
-  getInvalidRecords(): (InvalidRecords[number] & {
-    reference: string;
-    expectedBalance: number;
-  })[] {
-    if (!this.validationResponse) {
+  private getInvalidRecords(): InvalidRecordType {
+    if (!this.response) {
       return [];
     }
 
-    return Object.entries(this.validationResponse.invalidRecords).map(
-      ([key, value]) => ({
-        reference: key,
-        expectedBalance: value.startBalance + value.mutation,
-        startBalance: value.startBalance,
-        mutation: value.mutation,
-        endBalance: value.endBalance,
-      })
-    );
+    return Object.entries(this.response.invalidRecords).map(([key, value]) => ({
+      reference: key,
+      expectedBalance: value.startBalance + value.mutation,
+      startBalance: value.startBalance,
+      mutation: value.mutation,
+      endBalance: value.endBalance,
+    }));
   }
 }
