@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environment';
 import { ValidationResponse } from '../../../types/validation-response';
@@ -10,7 +10,8 @@ import { ValidationResponse } from '../../../types/validation-response';
 })
 export class FileUploaderComponent {
   selectedFile: File | null = null;
-  @Output() validationResultEvent = new EventEmitter<ValidationResponse>();
+  @Input() result: ValidationResponse | null = null;
+  @Output() resultChange = new EventEmitter<ValidationResponse | null>();
 
   constructor(private http: HttpClient) {}
 
@@ -19,6 +20,8 @@ export class FileUploaderComponent {
 
     if (!target || !target.files?.length) {
       this.selectedFile = null;
+      this.resultChange.emit(null);
+
       return;
     }
 
@@ -37,7 +40,7 @@ export class FileUploaderComponent {
       this.http.post(`${environment.apiEndpoint}/validate`, formData).subscribe(
         (response) => {
           const result = response as ValidationResponse;
-          this.validationResultEvent.emit(result);
+          this.resultChange.emit(result);
         },
         (error) => {
           console.error('Error:', error);
