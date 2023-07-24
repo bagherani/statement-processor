@@ -1,11 +1,12 @@
 import { resolve as resolvePath } from 'path';
+import { readFileSync } from 'fs';
 
 import {
   TransactionReaderFactory,
-  TransactionsFileType
+  TransactionsFileType,
 } from '../../services/transaction.reader.factory';
 
-it('CSV Stream', done => {
+it('CSV Stream', (done) => {
   const filename = resolvePath(__dirname, '../__mocks__/records.csv');
 
   const fn = jest.fn().mockImplementation((error, res) => {
@@ -15,5 +16,8 @@ it('CSV Stream', done => {
     }
   });
 
-  TransactionReaderFactory.create(TransactionsFileType.csv).read(filename, fn);
+  TransactionReaderFactory.create(TransactionsFileType.csv).read(
+    { buffer: readFileSync(filename) } as Express.Multer.File,
+    fn
+  );
 });

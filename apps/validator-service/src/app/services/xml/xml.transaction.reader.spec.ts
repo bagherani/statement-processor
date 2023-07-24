@@ -1,11 +1,12 @@
 import { resolve as resolvePath } from 'path';
+import { readFileSync } from 'fs';
 
 import {
   TransactionReaderFactory,
-  TransactionsFileType
+  TransactionsFileType,
 } from '../../services/transaction.reader.factory';
 
-it('Xml Stream', done => {
+it('Xml Stream', (done) => {
   const filename = resolvePath(__dirname, '../__mocks__/records.xml');
 
   const fn = jest.fn().mockImplementation((error, res) => {
@@ -15,5 +16,8 @@ it('Xml Stream', done => {
     }
   });
 
-  TransactionReaderFactory.create(TransactionsFileType.xml).read(filename, fn);
+  TransactionReaderFactory.create(TransactionsFileType.xml).read(
+    { buffer: readFileSync(filename) } as Express.Multer.File,
+    fn
+  );
 });
