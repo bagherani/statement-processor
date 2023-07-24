@@ -8,8 +8,8 @@ import { getFileStream } from '../../utils/file.stream';
 import { TransactionReader } from '../transaction.reader';
 
 export class XmlTransactionReader extends TransactionReader {
-  read(filename: string, callback: TransactionRecordCallback): void {
-    const fileStream = getFileStream(filename);
+  read(file: Express.Multer.File, callback: TransactionRecordCallback): void {
+    const fileStream = getFileStream(file);
     const xml = new XmlStream(fileStream);
 
     xml.preserve('records', true);
@@ -25,12 +25,10 @@ export class XmlTransactionReader extends TransactionReader {
     });
 
     xml.on('end', () => {
-      fileStream.close();
       callback(null, null);
     });
 
     xml.on('error', (err) => {
-      fileStream.close();
       callback(err, null);
     });
   }
