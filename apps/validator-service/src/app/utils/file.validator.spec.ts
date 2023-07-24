@@ -12,7 +12,7 @@ describe('fileValidations', () => {
   it('should call the callback with true for valid file types', () => {
     const mockFile = {
       mimetype: 'text/xml',
-    };
+    } as Express.Multer.File;
 
     fileValidations.fileFilter(null, mockFile, mockCb);
 
@@ -23,7 +23,7 @@ describe('fileValidations', () => {
   it('should call the callback with false for invalid file types', () => {
     const mockFile = {
       mimetype: 'image/jpeg',
-    };
+    } as Express.Multer.File;
 
     fileValidations.fileFilter(null, mockFile, mockCb);
 
