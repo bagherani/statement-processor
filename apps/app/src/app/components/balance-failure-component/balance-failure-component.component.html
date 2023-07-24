@@ -1,11 +1,22 @@
 <div
-  class="p-4 mb-4 mt-5 text-sm text-red-800 rounded-lg bg-red-50"
+  class="p-4 mb-4 mt-5 text-sm text-red-800 rounded-lg bg-red-50 flex flex-row"
   role="alert"
 >
-  <span class="font-medium">Invalid transaction found!</span>
+  <span class="font-medium inline-block mr-auto"
+    >Invalid transaction found!</span
+  >
+  <button type="button" *ngIf="!listView" (click)="changeToListView(true)">
+    List View
+  </button>
+  <button type="button" *ngIf="listView" (click)="changeToListView(false)">
+    Table View
+  </button>
 </div>
-<ul>
-  <li *ngFor="let item of invalidRecords" class="mt-3">
+<ul *ngIf="listView">
+  <li
+    *ngFor="let item of invalidRecords"
+    class="mt-3 border shadow-sm rounded p-5"
+  >
     Reference ID: <span class="font-bold">{{ item.reference }}</span>
     <ul class="pl-3">
       <li>Start balance: {{ item.startBalance }}</li>
@@ -17,3 +28,30 @@
     </ul>
   </li>
 </ul>
+
+<div *ngIf="!listView" class="relative overflow-x-auto">
+  <table class="w-full text-sm text-left text-gray-500">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">Ref ID</th>
+        <th scope="col" class="px-6 py-3">Start Balance</th>
+        <th scope="col" class="px-6 py-3">Mutation</th>
+        <th scope="col" class="px-6 py-3">Expected End Balance</th>
+        <th scope="col" class="px-6 py-3">End Balance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of invalidRecords" class="bg-white border-b">
+        <td scope="row" class="px-6 py-4">{{ item.reference }}</td>
+        <td scope="row" class="px-6 py-4">{{ item.startBalance }}</td>
+        <td scope="row" class="px-6 py-4">{{ item.mutation }}</td>
+        <td scope="row" class="px-6 py-4 text-blue-900">
+          {{ item.expectedBalance }}
+        </td>
+        <td scope="row" class="px-6 py-4 text-red-900">
+          {{ item.endBalance }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

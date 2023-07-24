@@ -9,4 +9,10 @@ import { InvalidRecordType } from '../../../types/validation-response';
 })
 export class BalanceFailureComponentComponent {
   @Input() invalidRecords: InvalidRecordType = [];
+
+  listView = true;
+
+  changeToListView(listView: boolean) {
+    this.listView = listView;
+  }
 }
