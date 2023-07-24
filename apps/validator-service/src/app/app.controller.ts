@@ -1,35 +1,33 @@
-import { Controller, Get } from '@nestjs/common';
-import { resolve as resolvePath } from 'path';
+import {
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
-import { AppService } from './app.service';
-import { TransactionValidator } from './services/transaction.validator';
 import { TransactionsFileType } from './services/transaction.reader.factory';
+import { TransactionValidator } from './services/transaction.validator';
+import { fileValidations } from './utils/file.validator';
+import { ValidationResponse } from './types/validation-response';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get('validate')
-  async validate(): Promise<any> {
+  @Post('validate')
+  @UseInterceptors(FileInterceptor('file', fileValidations))
+  async validate(
+    @UploadedFile() file: Express.Multer.File
+  ): Promise<ValidationResponse> {
     return new Promise((resolve) => {
       const validator: TransactionValidator = new TransactionValidator(
-        TransactionsFileType.xml
+        file.mimetype.match(/\/(xml)$/)
+          ? TransactionsFileType.xml
+          : TransactionsFileType.csv
       );
 
-      validator
-        .validate(
-          resolvePath(
-            '/Users/mohi/Documents/git/statement-validator/apps/validator-service/src/app/services/__mocks__/records.xml'
-          )
-        )
-        .on('done', (result) => {
-          resolve(result);
-        });
+      validator.validate(file).on('done', (result) => {
+        resolve(result);
+      });
     });
-  }
-
-  @Get()
-  getData() {
-    return this.appService.getData();
   }
 }
