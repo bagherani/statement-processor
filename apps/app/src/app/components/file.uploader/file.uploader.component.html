@@ -1,0 +1,37 @@
+<form method="post" (submit)="handleSubmit($event)">
+  <div
+    class="transition-shadow rounded overflow-hidden shadow-lg hover:shadow-xl p-5 mx-auto border border-gray-200"
+  >
+    <div>
+      <h1 class="font-bold text-xl mb-2">Upload a file to validate</h1>
+      <p class="text-gray-700 text-base">
+        Accepting an <code>xml</code> or <code>csv</code> file in the MT940
+        format
+      </p>
+    </div>
+    <div class="mt-auto">
+      <label
+        class="block mb-2 text-sm font-medium text-gray-900"
+        for="file_input"
+        >Upload file</label
+      >
+      <input
+        (change)="onFileChange($event)"
+        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+        type="file"
+        name="file_input"
+        id="file_input"
+        accept=".xml,.csv"
+      />
+    </div>
+    <div class="mt-3">
+      <button
+        [disabled]="selectedFile === null"
+        type="submit"
+        class="text-white bg-blue-500 disabled:bg-gray-100 disabled:text-gray-300 disabled:cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+      >
+        Validate
+      </button>
+    </div>
+  </div>
+</form>
