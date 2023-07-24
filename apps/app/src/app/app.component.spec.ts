@@ -3,8 +3,8 @@ import { AppComponent } from './app.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientModule } from '@angular/common/http';
 
-import { ResultViewComponent } from './components/result.view/result.view.component';
-import { FileUploaderComponent } from './components/file.uploader/file.uploader.component';
+import { ResultViewComponent } from './components/result-view/result.view.component';
+import { FileUploaderComponent } from './components/file-uploader/file.uploader.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
