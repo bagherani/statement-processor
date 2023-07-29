@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BalanceFailureComponentComponent } from './components/balance-failure-component/balance-failure-component.component';
 import { ReferenceDuplicationFailureComponentComponent } from './components/reference-duplication-failure-component/reference-duplication-failure-component.component';
 import { FileParsingFailureComponentComponent } from './components/file-parsing-failure-component/file-parsing-failure-component.component';
+import { ValidateService } from './services/validate.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,7 @@ import { FileParsingFailureComponentComponent } from './components/file-parsing-
     BrowserModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
   ],
-  providers: [],
+  providers: [ValidateService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
