@@ -1,4 +1,5 @@
 import XmlStream from 'xml-stream';
+import { File } from '@statement-validator/models';
 
 import {
   RawTransactionRecord,
@@ -8,7 +9,7 @@ import { getFileStream } from '../../utils/file.stream';
 import { TransactionReader } from '../transaction.reader';
 
 export class XmlTransactionReader extends TransactionReader {
-  read(file: Express.Multer.File, callback: TransactionRecordCallback): void {
+  read(file: File, callback: TransactionRecordCallback): void {
     const fileStream = getFileStream(file);
     const xml = new XmlStream(fileStream);
 

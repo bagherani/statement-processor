@@ -1,5 +1,6 @@
 import { resolve as resolvePath } from 'path';
 import { readFileSync } from 'fs';
+import { File } from '@statement-validator/models';
 
 import {
   TransactionReaderFactory,
@@ -17,7 +18,7 @@ it('CSV Stream', (done) => {
   });
 
   TransactionReaderFactory.create(TransactionsFileType.csv).read(
-    { buffer: readFileSync(filename) } as Express.Multer.File,
+    { buffer: readFileSync(filename) } as File,
     fn
   );
 });

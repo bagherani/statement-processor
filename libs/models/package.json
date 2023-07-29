@@ -1,0 +1,8 @@
+{
+  "name": "@statement-validator/models",
+  "version": "0.0.1",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "*"
+  }
+}
