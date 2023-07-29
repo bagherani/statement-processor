@@ -1,7 +1,8 @@
 import { EventEmitter } from 'events';
 import { File } from '@statement-validator/models';
+import { TransactionRecord } from '@statement-validator/models';
+import { recordValidator } from '@statement-validator/record-validator';
 
-import { TransactionRecord } from '../types/record-types';
 import { TransactionReader } from './transaction.reader';
 import {
   TransactionReaderFactory,
@@ -62,18 +63,17 @@ export class TransactionValidator extends EventEmitter {
     this.checkEndBalance(err, record);
   };
 
-  private checkEndBalance = (err: Error, record: TransactionRecord) => {
+  private checkEndBalance = (
+    err: Error,
+    { startBalance, endBalance, mutation, reference }: TransactionRecord
+  ) => {
     if (err) {
       this.errors.push(err);
       return;
     }
 
-    const startBalance = record.startBalance;
-    const mutation = record.mutation;
-    const endBalance = record.endBalance;
-
-    if ((startBalance + mutation).toFixed(2) !== endBalance.toFixed(2)) {
-      this.invalidRecords.set(record.reference, {
+    if (!recordValidator({ startBalance, endBalance, mutation, reference })) {
+      this.invalidRecords.set(reference, {
         startBalance,
         mutation,
         endBalance,

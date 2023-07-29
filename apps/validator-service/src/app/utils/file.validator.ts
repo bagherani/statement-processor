@@ -3,7 +3,7 @@ import { File } from '@statement-validator/models';
 
 export const fileValidations = {
   fileFilter: (
-    _: Express.Request,
+    _: unknown,
     file: File,
     cb: (err: Error, result: boolean) => void
   ) => {
