@@ -1,9 +1,10 @@
 import { getFileStream } from './file.stream';
 import { Readable } from 'stream';
+import { File } from '@statement-validator/models';
 
 describe('getFileStream', () => {
   it('should return a readable stream with file buffer', () => {
-    const mockFile: Express.Multer.File = {
+    const mockFile: File = {
       fieldname: 'file',
       stream: null,
       originalname: 'test.xml',

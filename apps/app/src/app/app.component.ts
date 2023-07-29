@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ValidationResponse } from '../types/validation-response';
+import { ValidationResponse } from '@statement-validator/models';
 
 @Component({
   selector: 'statement-validator-root',

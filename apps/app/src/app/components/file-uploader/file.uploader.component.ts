@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environment';
-import { ValidationResponse } from '../../../types/validation-response';
+import { ValidationResponse } from '@statement-validator/models';
 
 @Component({
   selector: 'statement-validator-file-uploader',

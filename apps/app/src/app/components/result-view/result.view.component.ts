@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import {
-  InvalidRecordType,
   ValidationResponse,
-} from '../../../types/validation-response';
+  InvalidRecordType,
+} from '@statement-validator/models';
 
 @Component({
   selector: 'statement-validator-result-view',

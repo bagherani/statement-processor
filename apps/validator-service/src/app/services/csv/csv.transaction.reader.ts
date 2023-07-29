@@ -1,4 +1,5 @@
 import { createStream as createCsvStream } from 'csv-stream';
+import { File } from '@statement-validator/models';
 
 import {
   CsvRecordType,
@@ -9,7 +10,7 @@ import { TransactionReader } from '../transaction.reader';
 import { CsvTransactionRecordOptions } from './csv.record.options';
 
 export class CsvTransactionReader extends TransactionReader {
-  read(file: Express.Multer.File, callback: TransactionRecordCallback): void {
+  read(file: File, callback: TransactionRecordCallback): void {
     getFileStream(file)
       .pipe(createCsvStream(CsvTransactionRecordOptions))
       .on('error', (err: Error) => {

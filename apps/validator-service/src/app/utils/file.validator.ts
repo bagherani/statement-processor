@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { File } from '@statement-validator/models';
 
 export const fileValidations = {
   fileFilter: (
     _: Express.Request,
-    file: Express.Multer.File,
+    file: File,
     cb: (err: Error, result: boolean) => void
   ) => {
     if (file.mimetype.match(/\/(xml|csv)$/)) {

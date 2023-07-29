@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { File } from '@statement-validator/models';
 
 import { TransactionRecord } from '../types/record-types';
 import { TransactionReader } from './transaction.reader';
@@ -10,7 +11,7 @@ import {
   DuplicatedReferences,
   InvalidRecords,
   ValidationResponse,
-} from '../types/validation-response';
+} from '@statement-validator/models';
 
 type InvalidRecord = {
   startBalance: number;
@@ -31,7 +32,7 @@ export class TransactionValidator extends EventEmitter {
     this.invalidRecords = new Map<number, InvalidRecord>();
   }
 
-  validate(file: Express.Multer.File) {
+  validate(file: File) {
     this.duplicateRefs.clear();
     this.invalidRecords.clear();
     this.errors.splice(0, this.errors.length);
