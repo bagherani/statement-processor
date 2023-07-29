@@ -15,7 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@statement-validator/models": ["libs/models/src/index.ts"]
+      "@statement-validator/models": ["libs/models/src/index.ts"],
+      "@statement-validator/record-validator": [
+        "libs/record-validator/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
