@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environment';
 import { ValidationResponse } from '@statement-validator/models';
+import { ValidateService } from '../../services/validate.service';
 
 @Component({
   selector: 'statement-validator-file-uploader',
@@ -13,7 +12,7 @@ export class FileUploaderComponent {
   @Input() result: ValidationResponse | null = null;
   @Output() resultChange = new EventEmitter<ValidationResponse | null>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private service: ValidateService) {}
 
   onFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -33,19 +32,12 @@ export class FileUploaderComponent {
   handleSubmit(e: Event) {
     e.preventDefault();
 
-    if (this.selectedFile) {
-      const formData: FormData = new FormData();
-      formData.append('file', this.selectedFile);
-
-      this.http.post(`${environment.apiEndpoint}/validate`, formData).subscribe(
-        (response) => {
-          const result = response as ValidationResponse;
-          this.resultChange.emit(result);
-        },
-        (error) => {
-          console.error('Error:', error);
-        }
-      );
+    if (!this.selectedFile) {
+      return;
     }
+
+    this.service.validate(this.selectedFile).subscribe((result) => {
+      this.resultChange.emit(result);
+    });
   }
 }

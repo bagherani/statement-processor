@@ -7,24 +7,22 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { File } from '@statement-validator/models';
 
-import { TransactionsFileType } from './services/transaction.reader.factory';
 import { TransactionValidator } from './services/transaction.validator';
 import { fileValidations } from './utils/file.validator';
 import { ValidationResponse } from '@statement-validator/models';
+import { getTransactionFileType } from './utils/file.type';
 
 @Controller()
 export class AppController {
   @Post('validate')
   @UseInterceptors(FileInterceptor('file', fileValidations))
-  async validate(@UploadedFile() file: File): Promise<ValidationResponse> {
+  validate(@UploadedFile() file: File): Promise<ValidationResponse> {
     return new Promise((resolve) => {
       const validator: TransactionValidator = new TransactionValidator(
-        file.mimetype.match(/\/(xml)$/)
-          ? TransactionsFileType.xml
-          : TransactionsFileType.csv
+        getTransactionFileType(file)
       );
 
-      validator.validate(file).on('done', (result) => {
+      validator.validate(file, (result) => {
         resolve(result);
       });
     });

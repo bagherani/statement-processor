@@ -1,4 +1,3 @@
-import { EventEmitter } from 'events';
 import { File } from '@statement-validator/models';
 import { TransactionRecord } from '@statement-validator/models';
 import { recordValidator } from '@statement-validator/record-validator';
@@ -13,6 +12,7 @@ import {
   InvalidRecords,
   ValidationResponse,
 } from '@statement-validator/models';
+import { Subject } from 'rxjs/internal/Subject';
 
 type InvalidRecord = {
   startBalance: number;
@@ -20,42 +20,40 @@ type InvalidRecord = {
   endBalance: number;
 };
 
-export class TransactionValidator extends EventEmitter {
+export class TransactionValidator {
   private readonly reader: TransactionReader;
   private readonly duplicateRefs: Map<number, number>;
   private readonly invalidRecords: Map<number, InvalidRecord>;
   private readonly errors: Error[] = [];
+  private readonly resultSubject: Subject<ValidationResponse>;
 
   constructor(fileType: TransactionsFileType) {
-    super();
     this.reader = TransactionReaderFactory.create(fileType);
     this.duplicateRefs = new Map<number, number>();
     this.invalidRecords = new Map<number, InvalidRecord>();
+    this.resultSubject = new Subject();
   }
 
-  validate(file: File) {
+  validate(file: File, observer: (result: ValidationResponse) => void) {
     this.duplicateRefs.clear();
     this.invalidRecords.clear();
     this.errors.splice(0, this.errors.length);
-    this.reader.read(file, this.validateRecord);
 
-    return this;
+    this.reader.read(file, this.receivedRecordFromFile);
+
+    return this.resultSubject.subscribe(observer);
   }
 
-  /**
-   * @emits done ValidationResponse
-   * @param err
-   * @param record
-   * @returns
-   */
-  private validateRecord = (err: Error, record: TransactionRecord) => {
+  private receivedRecordFromFile = (err: Error, record: TransactionRecord) => {
     if (record === null && err === null) {
-      this.emit('done', <ValidationResponse>{
+      const result: ValidationResponse = {
         duplicatedReferences: this.getDuplicateRefs(),
         invalidRecords: this.getInvalidRefs(),
         errors: this.getErrors(),
-      });
+      };
 
+      this.resultSubject.next(result);
+      this.resultSubject.complete();
       return;
     }
 
