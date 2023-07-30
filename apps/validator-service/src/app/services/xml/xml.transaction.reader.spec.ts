@@ -10,15 +10,15 @@ import {
 it('Xml Stream', (done) => {
   const filename = resolvePath(__dirname, '../__mocks__/records.xml');
 
-  const fn = jest.fn().mockImplementation((error, res) => {
-    if (res === null && error === null) {
-      done();
-      expect(fn).toBeCalledTimes(11);
-    }
-  });
+  const fn = jest.fn();
 
-  TransactionReaderFactory.create(TransactionsFileType.xml).read(
-    { buffer: readFileSync(filename) } as File,
-    fn
-  );
+  TransactionReaderFactory.create(TransactionsFileType.xml)
+    .read({ buffer: readFileSync(filename) } as File)
+    .subscribe({
+      next: fn,
+      complete: () => {
+        done();
+        expect(fn).toBeCalledTimes(10);
+      },
+    });
 });

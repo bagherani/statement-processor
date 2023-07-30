@@ -1,6 +1,6 @@
-import { TransactionRecordCallback } from '../types/record-types';
-import { File } from '@statement-validator/models';
+import { Observable } from 'rxjs/internal/Observable';
+import { File, TransactionRecord } from '@statement-validator/models';
 
 export abstract class TransactionReader {
-  abstract read(file: File, callback: TransactionRecordCallback): void;
+  abstract read(file: File): Observable<TransactionRecord>;
 }

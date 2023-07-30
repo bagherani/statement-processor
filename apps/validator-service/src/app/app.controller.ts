@@ -22,7 +22,7 @@ export class AppController {
         getTransactionFileType(file)
       );
 
-      validator.validate(file, (result) => {
+      validator.validate(file).subscribe((result) => {
         resolve(result);
       });
     });
