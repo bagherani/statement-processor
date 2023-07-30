@@ -11,7 +11,7 @@ export type RawTransactionRecord = {
 
 export type TransactionRecordCallback = (
   err: Error,
-  res: TransactionRecord
+  res: TransactionRecord | null
 ) => void;
 
 export type CsvRecordType = {
