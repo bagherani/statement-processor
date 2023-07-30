@@ -1,6 +1,7 @@
 import { File } from '@statement-validator/models';
 import { TransactionRecord } from '@statement-validator/models';
 import { recordValidator } from '@statement-validator/record-validator';
+import { Observable } from 'rxjs/internal/Observable';
 
 import { TransactionReader } from './transaction.reader';
 import {
@@ -29,48 +30,43 @@ export class TransactionValidator {
     this.resultSubject = new Subject();
   }
 
-  validate(file: File, observer: (result: ValidationResponse) => void) {
+  validate(file: File): Observable<ValidationResponse> {
     this.duplicateRefs.clear();
     this.invalidRecords.clear();
     this.errors.splice(0, this.errors.length);
 
-    this.reader.read(file, this.receivedRecordFromFile);
+    this.reader.read(file).subscribe({
+      next: (record: TransactionRecord) => {
+        this.checkForDuplication(record);
+        this.checkEndBalance(record);
+      },
+      error: (err) => {
+        this.errors.push(err);
+        this.sendResult();
+      },
+      complete: this.sendResult,
+    });
 
-    return this.resultSubject.subscribe(observer);
+    return this.resultSubject;
   }
 
-  private receivedRecordFromFile = (
-    err: Error,
-    record: TransactionRecord | null
-  ) => {
-    if (record === null && err === null) {
-      const result: ValidationResponse = {
-        duplicatedReferences: this.getDuplicateRefs(),
-        invalidRecords: this.getInvalidRefs(),
-        errors: this.getErrors(),
-      };
+  private sendResult = () => {
+    const result: ValidationResponse = {
+      duplicatedReferences: this.getDuplicateRefs(),
+      invalidRecords: this.getInvalidRefs(),
+      errors: this.getErrors(),
+    };
 
-      this.resultSubject.next(result);
-      this.resultSubject.complete();
-      return;
-    }
-
-    this.checkForDuplication(err, record);
-    this.checkEndBalance(err, record);
+    this.resultSubject.next(result);
+    this.resultSubject.complete();
   };
 
-  private checkEndBalance = (err: Error, record: TransactionRecord | null) => {
-    if (err) {
-      this.errors.push(err);
-      return;
-    }
-
-    if (record === null) {
-      return;
-    }
-
-    const { startBalance, endBalance, mutation, reference } = record;
-
+  private checkEndBalance = ({
+    startBalance,
+    endBalance,
+    mutation,
+    reference,
+  }) => {
     if (!recordValidator({ startBalance, endBalance, mutation, reference })) {
       this.invalidRecords.set(reference, {
         startBalance,
@@ -80,21 +76,7 @@ export class TransactionValidator {
     }
   };
 
-  private checkForDuplication = (
-    err: Error,
-    record: TransactionRecord | null
-  ) => {
-    if (err) {
-      this.errors.push(err);
-      return;
-    }
-
-    if (record === null) {
-      return;
-    }
-
-    const reference = record.reference;
-
+  private checkForDuplication = ({ reference }: TransactionRecord) => {
     this.duplicateRefs.set(
       reference,
       this.duplicateRefs.has(reference)

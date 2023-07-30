@@ -1,15 +1,16 @@
 import XmlStream from 'xml-stream';
-import { File } from '@statement-validator/models';
+import { File, TransactionRecord } from '@statement-validator/models';
+import { Subject } from 'rxjs/internal/Subject';
+import { Observable } from 'rxjs/internal/Observable';
 
-import {
-  RawTransactionRecord,
-  TransactionRecordCallback,
-} from '../../types/record-types';
+import { RawTransactionRecord } from '../../types/record-types';
 import { getFileStream } from '../../utils/file.stream';
 import { TransactionReader } from '../transaction.reader';
 
 export class XmlTransactionReader extends TransactionReader {
-  read(file: File, callback: TransactionRecordCallback): void {
+  private subject = new Subject<TransactionRecord>();
+
+  read(file: File): Observable<TransactionRecord> {
     const fileStream = getFileStream(file);
     const xml = new XmlStream(fileStream);
 
@@ -17,7 +18,7 @@ export class XmlTransactionReader extends TransactionReader {
     xml.collect('records');
 
     xml.on('endElement: record', (record: RawTransactionRecord) => {
-      callback(null, {
+      this.subject.next({
         reference: record.$.reference,
         startBalance: Number(record.startBalance.$text),
         mutation: Number(record.mutation.$text),
@@ -26,11 +27,13 @@ export class XmlTransactionReader extends TransactionReader {
     });
 
     xml.on('end', () => {
-      callback(null, null);
+      this.subject.complete();
     });
 
     xml.on('error', (err: Error) => {
-      callback(err, null);
+      this.subject.error(err);
     });
+
+    return this.subject;
   }
 }
