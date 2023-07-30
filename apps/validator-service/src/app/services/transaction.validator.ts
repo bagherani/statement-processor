@@ -13,12 +13,7 @@ import {
   ValidationResponse,
 } from '@statement-validator/models';
 import { Subject } from 'rxjs/internal/Subject';
-
-type InvalidRecord = {
-  startBalance: number;
-  mutation: number;
-  endBalance: number;
-};
+import { InvalidRecord } from '../types/record-types';
 
 export class TransactionValidator {
   private readonly reader: TransactionReader;
@@ -44,7 +39,10 @@ export class TransactionValidator {
     return this.resultSubject.subscribe(observer);
   }
 
-  private receivedRecordFromFile = (err: Error, record: TransactionRecord) => {
+  private receivedRecordFromFile = (
+    err: Error,
+    record: TransactionRecord | null
+  ) => {
     if (record === null && err === null) {
       const result: ValidationResponse = {
         duplicatedReferences: this.getDuplicateRefs(),
@@ -61,14 +59,17 @@ export class TransactionValidator {
     this.checkEndBalance(err, record);
   };
 
-  private checkEndBalance = (
-    err: Error,
-    { startBalance, endBalance, mutation, reference }: TransactionRecord
-  ) => {
+  private checkEndBalance = (err: Error, record: TransactionRecord | null) => {
     if (err) {
       this.errors.push(err);
       return;
     }
+
+    if (record === null) {
+      return;
+    }
+
+    const { startBalance, endBalance, mutation, reference } = record;
 
     if (!recordValidator({ startBalance, endBalance, mutation, reference })) {
       this.invalidRecords.set(reference, {
@@ -79,9 +80,16 @@ export class TransactionValidator {
     }
   };
 
-  private checkForDuplication = (err: Error, record: TransactionRecord) => {
+  private checkForDuplication = (
+    err: Error,
+    record: TransactionRecord | null
+  ) => {
     if (err) {
       this.errors.push(err);
+      return;
+    }
+
+    if (record === null) {
       return;
     }
 

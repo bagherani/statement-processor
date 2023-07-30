@@ -4,14 +4,14 @@
   <h2 class="font-bold">Result:</h2>
   <div class="p-6" *ngIf="showValidationErrors">
     <div *ngIf="hasDuplicatedReferences">
-      <statement-validator-reference-duplication-failure-component
+      <statement-validator-reference-duplication-failure
         [duplicateReferences]="duplicateReferences"
-      ></statement-validator-reference-duplication-failure-component>
+      ></statement-validator-reference-duplication-failure>
     </div>
     <div *ngIf="hasInvalidRecords">
-      <statement-validator-balance-failure-component
+      <statement-validator-balance-failure
         [invalidRecords]="invalidRecords"
-      ></statement-validator-balance-failure-component>
+      ></statement-validator-balance-failure>
     </div>
   </div>
 
@@ -24,8 +24,8 @@
   </div>
 
   <div *ngIf="hasFileError">
-    <statement-validator-file-parsing-failure-component
+    <statement-validator-file-parsing-failure
       [fileErrors]="fileErrors"
-    ></statement-validator-file-parsing-failure-component>
+    ></statement-validator-file-parsing-failure>
   </div>
 </div>

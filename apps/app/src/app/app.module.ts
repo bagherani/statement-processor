@@ -6,9 +6,9 @@ import { appRoutes } from './app.routes';
 import { FileUploaderComponent } from './components/file-uploader/file.uploader.component';
 import { ResultViewComponent } from './components/result-view/result.view.component';
 import { HttpClientModule } from '@angular/common/http';
-import { BalanceFailureComponentComponent } from './components/balance-failure-component/balance-failure-component.component';
-import { ReferenceDuplicationFailureComponentComponent } from './components/reference-duplication-failure-component/reference-duplication-failure-component.component';
-import { FileParsingFailureComponentComponent } from './components/file-parsing-failure-component/file-parsing-failure-component.component';
+import { BalanceFailureComponent } from './components/balance-failure/balance-failure.component';
+import { ReferenceDuplicationFailureComponent } from './components/reference-duplication-failure/reference-duplication-failure.component';
+import { FileParsingFailureComponent } from './components/file-parsing-failure/file-parsing-failure.component';
 import { ValidateService } from './services/validate.service';
 
 @NgModule({
@@ -16,9 +16,9 @@ import { ValidateService } from './services/validate.service';
     AppComponent,
     FileUploaderComponent,
     ResultViewComponent,
-    BalanceFailureComponentComponent,
-    ReferenceDuplicationFailureComponentComponent,
-    FileParsingFailureComponentComponent,
+    BalanceFailureComponent,
+    ReferenceDuplicationFailureComponent,
+    FileParsingFailureComponent,
   ],
   imports: [
     HttpClientModule,

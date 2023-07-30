@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { File } from '@statement-validator/models';
-import { fileValidations } from './file.validator';
+import { fileTypeValidationInterceptor } from './filetype.validation.interceptor';
 
 describe('fileValidations', () => {
   const mockCb = jest.fn();
@@ -14,7 +14,7 @@ describe('fileValidations', () => {
       mimetype: 'text/xml',
     } as File;
 
-    fileValidations.fileFilter(null, mockFile, mockCb);
+    fileTypeValidationInterceptor.fileFilter(null, mockFile, mockCb);
 
     expect(mockCb).toHaveBeenCalledTimes(1);
     expect(mockCb).toHaveBeenCalledWith(null, true);
@@ -25,7 +25,7 @@ describe('fileValidations', () => {
       mimetype: 'image/jpeg',
     } as File;
 
-    fileValidations.fileFilter(null, mockFile, mockCb);
+    fileTypeValidationInterceptor.fileFilter(null, mockFile, mockCb);
 
     expect(mockCb).toHaveBeenCalledTimes(1);
     expect(mockCb).toHaveBeenCalledWith(

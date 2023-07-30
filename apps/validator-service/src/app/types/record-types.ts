@@ -11,7 +11,7 @@ export type RawTransactionRecord = {
 
 export type TransactionRecordCallback = (
   err: Error,
-  res: TransactionRecord
+  res: TransactionRecord | null
 ) => void;
 
 export type CsvRecordType = {
@@ -19,4 +19,10 @@ export type CsvRecordType = {
   Mutation: number;
   'Start Balance': string;
   'End Balance': number;
+};
+
+export type InvalidRecord = {
+  startBalance: number;
+  mutation: number;
+  endBalance: number;
 };

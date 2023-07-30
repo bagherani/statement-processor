@@ -1,5 +1,5 @@
 import { File } from '@statement-validator/models';
-import { getTransactionFileType } from './file.type';
+import { getTransactionFileType } from './transaction.filetype';
 import { TransactionsFileType } from '../services/transaction.reader.factory';
 
 describe('getTransactionFileType', () => {

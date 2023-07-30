@@ -1,16 +1,17 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { File } from '@statement-validator/models';
 
-export const fileValidations = {
+export const fileTypeValidationInterceptor: MulterOptions = {
   fileFilter: (
     _: unknown,
     file: File,
-    cb: (err: Error, result: boolean) => void
+    callback: (err: Error, result: boolean) => void
   ) => {
     if (file.mimetype.match(/\/(xml|csv)$/)) {
-      cb(null, true);
+      callback(null, true);
     } else {
-      cb(
+      callback(
         new HttpException(`Unsupported file type`, HttpStatus.BAD_REQUEST),
         false
       );
