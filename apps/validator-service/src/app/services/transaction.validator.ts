@@ -13,12 +13,7 @@ import {
   ValidationResponse,
 } from '@statement-validator/models';
 import { Subject } from 'rxjs/internal/Subject';
-
-type InvalidRecord = {
-  startBalance: number;
-  mutation: number;
-  endBalance: number;
-};
+import { InvalidRecord } from '../types/record-types';
 
 export class TransactionValidator {
   private readonly reader: TransactionReader;

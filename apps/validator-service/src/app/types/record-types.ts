@@ -20,3 +20,9 @@ export type CsvRecordType = {
   'Start Balance': string;
   'End Balance': number;
 };
+
+export type InvalidRecord = {
+  startBalance: number;
+  mutation: number;
+  endBalance: number;
+};
