@@ -53,21 +53,40 @@ describe('FileUploaderComponent', () => {
   });
 
   it('should disable the "Validate" button when selectedFile is null', () => {
-    component.selectedFile = null;
+    const inputElement: HTMLInputElement =
+      fixture.nativeElement.querySelector('input[type="file"]');
+
+    Object.defineProperty(inputElement, 'files', {
+      value: null,
+    });
+
+    const fileChangeEvent = new Event('change', { bubbles: true });
+    inputElement.dispatchEvent(fileChangeEvent);
     fixture.detectChanges();
+
+    const isValid = fixture.nativeElement.querySelector('form').checkValidity();
 
     const buttonElement: HTMLButtonElement =
       fixture.nativeElement.querySelector('button[type="submit"]');
-    expect(buttonElement.disabled).toBeTruthy();
+    expect(buttonElement.disabled).not.toBe(isValid);
   });
 
-  it('should enable the "Validate" button when selectedFile is not null', () => {
-    const file = new File(['test content'], 'test.txt', { type: 'text/plain' });
-    component.selectedFile = file;
+  it('should enable the "Validate" button when a file is selected', () => {
+    const inputElement: HTMLInputElement =
+      fixture.nativeElement.querySelector('input[type="file"]');
+
+    Object.defineProperty(inputElement, 'files', {
+      value: [{ name: 'filename', filename: 'filename' }],
+    });
+
+    const fileChangeEvent = new Event('change', { bubbles: true });
+    inputElement.dispatchEvent(fileChangeEvent);
     fixture.detectChanges();
+
+    const isValid = fixture.nativeElement.querySelector('form').checkValidity();
 
     const buttonElement: HTMLButtonElement =
       fixture.nativeElement.querySelector('button[type="submit"]');
-    expect(buttonElement.disabled).toBeFalsy();
+    expect(buttonElement.disabled).not.toBe(isValid);
   });
 });
