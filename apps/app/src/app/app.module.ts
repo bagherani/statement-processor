@@ -10,6 +10,7 @@ import { BalanceFailureComponent } from './components/balance-failure/balance-fa
 import { ReferenceDuplicationFailureComponent } from './components/reference-duplication-failure/reference-duplication-failure.component';
 import { FileParsingFailureComponent } from './components/file-parsing-failure/file-parsing-failure.component';
 import { ValidateService } from './services/validate.service';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { ValidateService } from './services/validate.service';
   imports: [
     HttpClientModule,
     BrowserModule,
+    FormsModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
   ],
   providers: [ValidateService],
