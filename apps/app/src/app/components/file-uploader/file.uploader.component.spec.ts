@@ -17,6 +17,11 @@ describe('FileUploaderComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    component.errorMessage = '';
+    fixture.detectChanges();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -27,6 +32,15 @@ describe('FileUploaderComponent', () => {
       fixture.nativeElement.querySelector('form');
     formElement.dispatchEvent(new Event('submit'));
     expect(handleSubmitSpy).toHaveBeenCalled();
+  });
+
+  it('should show the error message when form has an error', () => {
+    component.errorMessage = 'Error';
+    fixture.detectChanges();
+    const errorMessageElement =
+      fixture.nativeElement.querySelector('.mt-3.text-red-900');
+
+    expect(errorMessageElement).toBeTruthy();
   });
 
   it('should update selectedFile when a file is selected', () => {

@@ -1,6 +1,7 @@
 <form method="post" #form (submit)="handleSubmit($event)">
   <div
-    class="transition-shadow rounded overflow-hidden shadow-lg hover:shadow-xl p-5 mx-auto border border-gray-200"
+    class="max-w-min transition-shadow rounded overflow-hidden shadow-lg hover:shadow-xl p-5 mx-auto border border-gray-200"
+    [class.border-red-900]="errorMessage"
   >
     <div>
       <h2 class="font-bold text-xl mb-2">Upload a file to validate</h2>
@@ -9,7 +10,7 @@
         format
       </p>
     </div>
-    <div class="mt-auto">
+    <div class="mt-5">
       <label
         class="block mb-2 text-sm font-medium text-gray-900"
         for="file_input"
@@ -18,7 +19,7 @@
       <input
         required
         (change)="onFileChange($event)"
-        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+        class="text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
         type="file"
         name="file_input"
         id="file_input"
@@ -27,12 +28,18 @@
     </div>
     <div class="mt-3">
       <button
-        [disabled]="!form.checkValidity()"
+        [disabled]="!form.checkValidity() || loading"
         type="submit"
         class="text-white bg-blue-500 disabled:bg-gray-100 disabled:text-gray-300 disabled:cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center"
       >
-        Validate
+        <span *ngIf="loading">
+          <i class="ti ti-loader-2 spin inline-block"></i>
+          Uploading the file</span
+        >
+        <span *ngIf="!loading">Validate</span>
       </button>
     </div>
+
+    <p class="mt-3 text-red-900" *ngIf="errorMessage">{{ errorMessage }}</p>
   </div>
 </form>

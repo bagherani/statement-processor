@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ValidationResponse } from '@statement-validator/models';
 import { ValidateService } from '../../services/validate.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'statement-validator-file-uploader',
@@ -9,6 +10,9 @@ import { ValidateService } from '../../services/validate.service';
 })
 export class FileUploaderComponent {
   selectedFile: File | null = null;
+  errorMessage = '';
+  loading = false;
+
   @Input() result: ValidationResponse | null = null;
   @Output() resultChange = new EventEmitter<ValidationResponse | null>();
 
@@ -16,6 +20,7 @@ export class FileUploaderComponent {
 
   onFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
+    this.errorMessage = '';
 
     if (!target || !target.files?.length) {
       this.selectedFile = null;
@@ -36,8 +41,20 @@ export class FileUploaderComponent {
       return;
     }
 
-    this.service.validate(this.selectedFile).subscribe((result) => {
-      this.resultChange.emit(result);
+    this.loading = true;
+
+    this.service.validate(this.selectedFile).subscribe({
+      next: (result) => {
+        this.resultChange.emit(result);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.errorMessage = err.message;
+        this.loading = false;
+      },
+      complete: () => {
+        this.errorMessage = '';
+        this.loading = false;
+      },
     });
   }
 }
