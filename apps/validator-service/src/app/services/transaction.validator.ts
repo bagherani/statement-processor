@@ -1,6 +1,6 @@
 import { File } from '@statement-validator/models';
 import { TransactionRecord } from '@statement-validator/models';
-import { recordValidator } from '@statement-validator/record-validator';
+import { recordValidator as isRecordValid } from '@statement-validator/record-validator';
 import { Observable } from 'rxjs/internal/Observable';
 
 import { TransactionReader } from './transaction.reader';
@@ -67,7 +67,7 @@ export class TransactionValidator {
     mutation,
     reference,
   }) => {
-    if (!recordValidator({ startBalance, endBalance, mutation, reference })) {
+    if (!isRecordValid({ startBalance, endBalance, mutation, reference })) {
       this.invalidRecords.set(reference, {
         startBalance,
         mutation,
